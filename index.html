@@ -39,7 +39,10 @@
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
+html, body { overflow-x:hidden; }
 body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px; min-height:100vh; }
+.page, .cnt, .sb { min-width:0; }
+.cnt > * { min-width:0; }
 
 /* ── HEADER ── */
 .hdr {
@@ -308,7 +311,7 @@ input[type=range].sr::-webkit-slider-thumb { -webkit-appearance:none; width:14px
 .co2-card {
   background:var(--white); border:1.5px solid var(--border); border-radius:var(--radius);
   padding:14px 16px; margin-bottom:14px; box-shadow:var(--shadow-sm);
-  display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;
+  display:grid; grid-template-columns:repeat(3,1fr); gap:14px;
 }
 .co2-blk { text-align:center; }
 .co2-lbl { font-size:10px; font-weight:600; letter-spacing:1.2px; text-transform:uppercase; color:var(--text3); margin-bottom:5px; }
@@ -330,21 +333,120 @@ input[type=range].sr::-webkit-slider-thumb { -webkit-appearance:none; width:14px
 /* FOOTER */
 .page-footer { text-align:center; padding:12px; font-size:10.5px; color:var(--text3); border-top:1px solid var(--border); background:var(--white); }
 
+/* CHART WRAPPER */
+.chart-wrap { height:230px; position:relative; }
+
+/* BATTERY DEG KPIS */
+.bdeg-kpis-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:10px; }
+
+/* SIDEBAR WRAPPER (<details>) — desktop por defecto se comporta como columna fija */
+.sb-wrap { display:contents; }
+.sb-summary { display:none; }
+/* En desktop fuerza mostrar .sb aunque el <details> esté cerrado (edge case al reescalar desde tablet) */
+@media (min-width: 1024px) {
+  .sb-wrap > .sb { display:block; }
+}
+
 /* SCROLLBAR */
 .sb::-webkit-scrollbar { width:4px; }
 .sb::-webkit-scrollbar-track { background:transparent; }
 .sb::-webkit-scrollbar-thumb { background:var(--border2); border-radius:4px; }
 
-@media(max-width:900px){
-  .page { grid-template-columns:1fr; }
-  .sb { height:auto; position:static; border-right:none; border-bottom:1px solid var(--border); }
-  .hero-grid,.tables-grid,.charts-row { grid-template-columns:1fr; }
-  .strip { grid-template-columns:1fr 1fr; }
-  .sens-grid { grid-template-columns:repeat(3,1fr); }
-  .co2-card { grid-template-columns:1fr; }
-  .hdr { flex-direction:column; }
-  .alert-pill { align-self:flex-start; }
+/* ──────── RESPONSIVE BREAKPOINTS ──────── */
+
+/* Desktop pequeño: estrechar sidebar a 260px */
+@media (max-width: 1199px) {
+  .page { grid-template-columns:260px 1fr; }
+  .sens-grid { grid-template-columns:repeat(6,1fr); }
 }
+
+/* Tablet (<1024px): sidebar plegable arriba + grids ajustados */
+@media (max-width: 1023px) {
+  .page { grid-template-columns:1fr; }
+  .sb-wrap {
+    display:block;
+    background:var(--white);
+    border-bottom:1px solid var(--border);
+    margin-bottom:0;
+  }
+  .sb-summary {
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:12px 18px;
+    cursor:pointer;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--text2);
+    background:var(--bg);
+    border-bottom:1px solid var(--border);
+    list-style:none;
+    user-select:none;
+    position:sticky;
+    top:0;
+    z-index:10;
+  }
+  .sb-summary::-webkit-details-marker { display:none; }
+  .sb-summary::marker { content:''; }
+  .sb-summary-icon { font-size:14px; }
+  .sb-summary-chevron { margin-left:auto; font-size:12px; transition:transform .2s; }
+  details[open] > .sb-summary .sb-summary-chevron { transform:rotate(180deg); }
+  .sb {
+    height:auto;
+    position:static;
+    border-right:none;
+    overflow:visible;
+    padding:14px 16px 18px;
+  }
+  .hero-grid { grid-template-columns:1fr 1fr; }
+  .tables-grid { grid-template-columns:1fr 1fr; }
+  .charts-row { grid-template-columns:1fr; }
+  .strip { grid-template-columns:repeat(2,1fr); }
+  .sens-grid { grid-template-columns:repeat(3,1fr); }
+  .co2-card { grid-template-columns:repeat(3,1fr); }
+  .bdeg-kpis-grid { grid-template-columns:repeat(2,1fr); }
+  .hdr { flex-wrap:wrap; gap:12px; }
+  .alert-pill { min-width:0; align-self:flex-start; }
+}
+
+/* Mobile (<640px): todo 1 columna + tipografía compacta */
+@media (max-width: 640px) {
+  .hdr { padding:14px 16px 12px; flex-direction:column; align-items:stretch; }
+  .cnt { padding:14px 12px; }
+  .hero-grid { grid-template-columns:1fr; }
+  .tables-grid { grid-template-columns:1fr; }
+  .co2-card { grid-template-columns:1fr; gap:18px; }
+  .strip { grid-template-columns:repeat(2,1fr); gap:8px; }
+  .sens-grid { grid-template-columns:repeat(2,1fr); }
+  .bdeg-kpis-grid { grid-template-columns:repeat(2,1fr); }
+
+  /* Comparison bar vertical */
+  .cmp-card { flex-direction:column; align-items:stretch; gap:10px; padding:12px 14px; }
+  .cmp-lbl { white-space:normal; }
+  .cmp-lbl br { display:none; }
+  .cmp-stat { text-align:left; min-width:0; }
+
+  /* Charts más bajos */
+  .chart-wrap { height:200px; }
+
+  /* Tablas: tipografía más compacta */
+  .tbl { padding:12px 14px; }
+  .trow { font-size:11.5px; gap:8px; }
+  .trow .tv { font-size:12px; }
+  .tbl-total .tv { font-size:18px; }
+
+  /* Pill: ocultar segunda línea para que quepa */
+  #price-status { display:none; }
+  .alert-pill { padding:8px 12px; min-width:0; }
+}
+
+/* ──────── TIPOGRAFÍA FLUIDA ──────── */
+.kpi-val { font-size:clamp(20px, 2.6vw, 26px); }
+.tbl-total .tv { font-size:clamp(18px, 2.2vw, 22px); }
+.co2-big { font-size:clamp(26px, 3.4vw, 34px); }
+.cmp-pct { font-size:clamp(22px, 2.8vw, 28px); }
 </style>
 </head>
 <body>
@@ -356,7 +458,7 @@ input[type=range].sr::-webkit-slider-thumb { -webkit-appearance:none; width:14px
     <h1>Comparativa <span class="d">Diésel</span> vs <span class="e">Eléctrico</span><br>Compra · Leasing · Renting</h1>
     <p class="hdr-sub">Selecciona escenario de precio — <strong>surtidor o profesional</strong> — y modalidad de financiación independiente para cada vehículo. Resultados orientativos.</p>
   </div>
-  <div class="alert-pill" id="price-pill" style="min-width:160px;transition:all .3s">
+  <div class="alert-pill" id="price-pill" style="transition:all .3s">
     <div class="pulse" id="price-pulse"></div>
     <div>
       <span id="price-label" style="font-weight:600">Cargando precio...</span><br>
@@ -368,6 +470,8 @@ input[type=range].sr::-webkit-slider-thumb { -webkit-appearance:none; width:14px
 <div class="page">
 
 <!-- ══════════ SIDEBAR ══════════ -->
+<details class="sb-wrap" open>
+<summary class="sb-summary"><span class="sb-summary-icon">⚙️</span> Ajustes del cálculo <span class="sb-summary-chevron">▾</span></summary>
 <div class="sb">
 
   <!-- DIESEL MODELS -->
@@ -519,6 +623,7 @@ input[type=range].sr::-webkit-slider-thumb { -webkit-appearance:none; width:14px
 
   <button class="reset-btn" onclick="resetAll()">↺ Restablecer valores por defecto</button>
 </div><!-- end sidebar -->
+</details>
 
 <!-- ══════════ CONTENT ══════════ -->
 <div class="cnt">
@@ -634,11 +739,11 @@ input[type=range].sr::-webkit-slider-thumb { -webkit-appearance:none; width:14px
   <div class="charts-row">
     <div class="chart-card">
       <div class="chart-hdr">📊 Desglose costes anuales</div>
-      <div style="height:230px;position:relative"><canvas id="cA"></canvas></div>
+      <div class="chart-wrap"><canvas id="cA"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-hdr">📈 TCO acumulado — <span id="chart-y">8</span> años (flujo de caja total)</div>
-      <div style="height:230px;position:relative"><canvas id="cT"></canvas></div>
+      <div class="chart-wrap"><canvas id="cT"></canvas></div>
     </div>
   </div>
 
@@ -653,7 +758,7 @@ input[type=range].sr::-webkit-slider-thumb { -webkit-appearance:none; width:14px
     <div style="font-size:11.5px;font-weight:700;color:#5b21b6;margin-bottom:10px;padding-bottom:7px;border-bottom:1.5px solid #ede9fe;display:flex;align-items:center;gap:6px;">
       🔋 Impacto de la degradación de batería en el TCO
     </div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px;" id="bdeg-kpis"></div>
+    <div class="bdeg-kpis-grid" id="bdeg-kpis"></div>
     <div style="font-size:11px;line-height:1.6;" id="bdeg-table"></div>
     <div style="font-size:10.5px;color:var(--text3);margin-top:10px;padding-top:8px;border-top:1px solid #ede9fe;line-height:1.6;">
       <strong style="color:#5b21b6;">Fuente:</strong> Geotab 2025 — análisis de 22.700 vehículos eléctricos. Degradación media real: <strong>~2,3%/año</strong>. Tras 8 años: ~82% SOH. 
