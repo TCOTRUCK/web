@@ -1,0 +1,47 @@
+name: Update fuel prices
+
+on:
+  schedule:
+    # Diario a las 07:30 UTC (≈ 09:30 hora peninsular en horario de verano).
+    # MITECO publica precios actualizados varias veces al día; una vez basta.
+    - cron: '30 7 * * *'
+  workflow_dispatch:        # permite ejecutar manualmente desde la pestaña Actions
+  push:
+    paths:
+      - '.github/scripts/fetch_prices.py'
+      - '.github/workflows/update-prices.yml'
+
+permissions:
+  contents: write           # necesario para commit & push
+
+concurrency:
+  group: update-prices
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Fetch MITECO prices
+        id: fetch
+        run: python .github/scripts/fetch_prices.py
+
+      - name: Commit updated prices.json
+        run: |
+          if git diff --quiet -- prices.json; then
+            echo "Sin cambios en prices.json — nada que commitear."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add prices.json
+          git commit -m "chore(prices): actualiza Gasóleo A · surtidor ${{ steps.fetch.outputs.surtidor }} €/l · prof ${{ steps.fetch.outputs.profesional }} €/l (${{ steps.fetch.outputs.estaciones }} estaciones)"
+          git push
