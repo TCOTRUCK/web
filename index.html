@@ -1364,18 +1364,24 @@ async function loadLivePrices() {
 
     if(pr.status==='fulfilled' && pr.value.gasoleo_a) {
       const p = pr.value;
-      // Solo actualiza el slider si el usuario está en modo surtidor
-      // En modo profesional, el precio MINETUR se muestra como referencia pero no modifica el cálculo
+      // Actualiza ambos escenarios. El profesional se deriva del surtidor
+      // restando devolución (~0,067 €/l) + descuento tarjeta flota (~0,366 €/l).
+      // El backend ya envía gasoleo_a_profesional pre-calculado; si no, lo derivamos aquí.
       DIESEL_PRICES.surtidor.price = p.gasoleo_a;
-      if(priceScenario === 'surtidor') {
-        S.dp = p.gasoleo_a;
-        sv('s-dp', p.gasoleo_a);
-      }
+      const profPrice = (typeof p.gasoleo_a_profesional === 'number')
+        ? p.gasoleo_a_profesional
+        : +(p.gasoleo_a - 0.067 - 0.366).toFixed(3);
+      DIESEL_PRICES.profesional.price = profPrice;
+      // Refresca el slider con el precio del escenario actualmente activo
+      const activePrice = DIESEL_PRICES[priceScenario].price;
+      S.dp = activePrice;
+      sv('s-dp', activePrice);
       const stale = !!p.stale;
       const d = p.iso_date ? new Date(p.iso_date).toLocaleDateString('es-ES',{day:'numeric',month:'short'}) : p.fecha||'';
-      const surLabel = p.gasoleo_a.toFixed(3).replace('.',',');
+      const surLabel  = p.gasoleo_a.toFixed(3).replace('.',',');
+      const profLabel = profPrice.toFixed(3).replace('.',',');
       setPill(stale ? 'stale' : 'live',
-        (stale?'⚠️ ':'🟢 ')+'Surtidor: '+surLabel+' €/l · Profesional: ~1,43 €/l',
+        (stale?'⚠️ ':'🟢 ')+'Surtidor: '+surLabel+' €/l · Profesional: '+profLabel+' €/l',
         stale ? 'Último dato disponible · '+d : d+' · '+((p.estaciones||0).toLocaleString('es-ES'))+' estaciones');
     } else {
       setPill('offline','⚪ Gasóleo A: '+S.dp.toFixed(3).replace('.',',')+' €/l','Datos de referencia (sin conexión)');
