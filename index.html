@@ -84,8 +84,10 @@ body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif
   border-right:1px solid var(--border);
   padding:16px 14px;
   overflow-y:auto;
-  height:calc(100vh - 74px);
-  position:sticky; top:0;
+  position:sticky;
+  top:1rem;
+  max-height:calc(100vh - 2rem);
+  align-self:start;
 }
 
 .sb-section { margin-bottom:18px; }
@@ -395,6 +397,8 @@ input[type=range].sr::-webkit-slider-thumb { -webkit-appearance:none; width:14px
   details[open] > .sb-summary .sb-summary-chevron { transform:rotate(180deg); }
   .sb {
     height:auto;
+    max-height:none;
+    top:auto;
     position:static;
     border-right:none;
     overflow:visible;
