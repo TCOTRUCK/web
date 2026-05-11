@@ -2,14 +2,13 @@
   "gasoleo_a": 1.697,
   "gasoleo_a_profesional": 1.264,
   "estaciones": 11210,
-  "fecha": "11/05/2026 20:00:39",
-  "iso_date": "2026-05-11T20:00:39",
+  "fecha": "11/05/2026 20:11:45",
+  "iso_date": "2026-05-11T20:11:45",
   "fuente": "MITECO",
-  "stale": true,
-  "last_check": "2026-05-11T18:06:24.101641+00:00",
+  "stale": false,
+  "last_check": "2026-05-11T18:12:04.167939+00:00",
   "descuentos_profesional": {
     "devolucion_profesional_eur_l": 0.067,
     "descuento_flota_eur_l": 0.366
-  },
-  "last_error": "fetch error: <urlopen error [Errno 104] Connection reset by peer>"
+  }
 }
