@@ -1,66 +1,112 @@
-# Proyecto TCOTRUCK
+# TCOTRUCK — Calculadora TCO de camiones pesados
 
-Calculadora TCO (Total Cost of Ownership) para camiones pesados en España y Europa. Compara escenarios diésel vs eléctrico con modelos reales del mercado, modalidades de financiación (compra/leasing/renting), y datos actualizados de combustible y degradación de batería.
+Calculadora de Total Cost of Ownership (TCO) para flota pesada, comparando
+gasóleo vs. eléctrico en mercado español/europeo. Audiencia: gestores de
+flota, transportistas y consultores de transporte pesado.
 
-## Producción
-- URL: https://tcotruck.com
-- Hosting: Cloudflare Pages
-- Deploy: automático en cada push a main (en ~60 segundos)
-- Dominio: gestionado en Cloudflare Registrar
+Producción en https://tcotruck.com (Cloudflare Pages, deploy automático
+en cada push a `main`).
 
-## Arquitectura
-- index.html: aplicación completa en un único archivo (HTML + CSS + JavaScript vanilla)
-- prices.json: datos de precio del gasóleo (surtidor y profesional), actualizado automáticamente
-- .github/workflows/: GitHub Action que actualiza prices.json diariamente desde la API del Ministerio de Transición Ecológica (MINETUR)
-- README.md: documentación mínima
+## Ubicación del repo
 
-## Stack técnico
-- HTML5, CSS3 (variables custom, sin frameworks)
-- JavaScript vanilla (sin React, Vue, ni librerías de UI)
-- Chart.js (vía CDN) para los gráficos
-- Sin build step, sin transpilación
-- Sin dependencias npm
+- **Repo real**: `C:\proyectos\tcotruck\`
+- **No está en OneDrive.** Si ves una carpeta `OneDrive\Desktop\Calculadora
+  camión eléctrico\` con archivos parecidos, es un espejo histórico anterior
+  al repo. Está marcado para archivar. Trabajar siempre en `C:\proyectos\tcotruck\`.
 
-## Lenguaje
-- Interfaz actual: español (España)
-- Planeada: versión inglesa para mercado europeo
-- Audiencia: gestores de flota, transportistas, consultores del sector transporte pesado
+## Stack
 
-## Diseño y estética
-- Tipografía: serif para titulares y números grandes, sans-serif para datos y controles
-- Paleta de colores: naranja para diésel, azul para eléctrico, verde para ahorro, rojo para sobrecoste
-- Estilo editorial profesional, no SaaS típico. Inspirado en herramientas serias como ICCT, ACEA, IEA
-- Tres columnas en desktop: panel diésel, resultados centrales, panel eléctrico
+- HTML5 + CSS3 (con variables custom) + JavaScript vanilla.
+- Chart.js cargado vía CDN.
+- **Sin frameworks. Sin build step. Sin npm.** No hay `package.json`
+  y no debe haberlo.
+- Un único `index.html` monolítico que contiene HTML, CSS y JS inline.
+- Hosting: Cloudflare Pages, deploy automático al hacer push a `main`.
 
-## Datos y fuentes
-- Precio de gasóleo: API del Ministerio de Transición Ecológica (MINETUR), actualizado diariamente
-- Modelos de camión: precios verificados de fabricantes (Mercedes, Volvo, Scania, MAN, DAF, Renault) para versiones 2025-2026
-- Degradación de batería: estudio Geotab 2025 (22.700 vehículos analizados, ~2,3% al año)
-- Mix eléctrico España: 0,21 kgCO2 por kWh
-- Factor emisión diésel: 2,67 kgCO2 por litro
+## Restricciones técnicas (importantes)
 
-## Workflow Git
-- Rama principal: main
-- Estilo de commits: mensajes descriptivos en español, prefijo convencional (feat, fix, chore, style, docs)
-- Push directo a main (proyecto de un solo desarrollador, sin PRs)
-- Cloudflare Pages despliega automáticamente tras cada push
+- **NO añadir frameworks** (React, Vue, Svelte, etc.) sin discutirlo antes.
+- **NO añadir dependencias npm.** El proyecto es deliberadamente zero-deps.
+- **NO romper el contrato con `prices.json`.** La estructura del JSON la
+  consume el frontend y la produce el GitHub Action de MITECO; cambiar
+  campos rompe ambos lados.
+- **Mantener compatibilidad** con últimas 2 versiones de Chrome, Firefox,
+  Safari y Edge.
+- **Performance**: el archivo único debe cargar en menos de 1 segundo
+  en 4G. Cuidado al añadir scripts o assets pesados.
+
+## Diseño visual
+
+- Paleta semántica con variables CSS en `:root`:
+  - `--diesel` (#d97706, amber cálido) para gasóleo.
+  - `--elec` (#0284c7, azul cielo) para eléctrico.
+  - `--green` para ahorro, rojo para sobrecoste.
+- Estilo editorial profesional, no SaaS típico.
+- Layout responsive con tres breakpoints (1199 / 1023 / 640 px).
+- En desktop: tres columnas con sidebar sticky.
+- En tablet/mobile: una columna apilada, sidebar plegable con
+  `<details class="sb-wrap">` y chevron animado.
+- Tipografía fluida con `clamp()` en valores clave.
+- Fix de scroll horizontal con `html, body { overflow-x: clip; }`.
+
+## Datos
+
+- **Precios de combustible**: actualizados diariamente por GitHub Action
+  desde la API de MITECO. Ver `.github/workflows/update-prices.yml` y
+  `.github/scripts/fetch_prices.py`. El cron está programado a las
+  07:30 UTC (≈ 09:30 hora peninsular en verano).
+- **Modelos de camión 2025-2026**: Mercedes Actros, Volvo FH, Scania R,
+  MAN TGX, DAF XF, Renault T.
+- **Degradación de batería**: basada en el estudio Geotab 2025.
+
+## Idioma
+
+- Versión actual: español.
+- Versión inglesa para mercado europeo: planeada, todavía no implementada.
+  Decisión pendiente: subdirectorio `/en/` vs. toggle ES/EN en runtime.
+
+## Convenciones para Claude Code
+
+- **Entorno**: Windows. Comandos en **PowerShell**, no bash. Siempre
+  indicar antes en qué carpeta hay que estar.
+- **Antes de modificar archivos críticos** (`index.html`, workflows,
+  `prices.json`), mostrar `git diff` y esperar OK explícito antes
+  de hacer `git add` / `commit` / `push`.
+- **Mensajes de commit** en inglés, estilo Conventional Commits cuando
+  aplique (`feat:`, `fix:`, `chore:`, `docs:`).
+- **No tocar `prices.json` a mano**: lo gestiona el workflow.
 
 ## Pendientes priorizados
-1. CSS responsive: eliminar el scroll horizontal en pantallas medianas y pequeñas. Mantener diseño de tres columnas en desktop, colapsar a una columna en mobile
-2. Versión inglesa (EN): toggle ES/EN integrado o subdirectorio /en/
-3. Página /methodology: explicar fuentes, supuestos y metodología
-4. Footer con aviso legal mínimo: requerido por LSSI-CE si se monetiza o capta leads
-5. Mejoras inspiradas en ICCT TCO Calculator: tasa de descuento (NPV), escalado anual de precios, coste laboral del conductor, penalización por carga útil
 
-## Restricciones importantes
-- NO añadir frameworks (React, Vue, etc.) sin discutirlo antes. La simplicidad arquitectónica es deliberada
-- NO añadir dependencias npm. El proyecto no tiene package.json ni node_modules
-- NO romper el contrato con prices.json (estructura que espera el GitHub Action de MINETUR)
-- Mantener compatibilidad con navegadores modernos (Chrome, Firefox, Safari, Edge, últimas 2 versiones)
-- Performance: el archivo único debe seguir cargando en menos de 1 segundo en 4G
+1. Aviso legal y footer mínimo (LSSI-CE, requerido antes de monetizar).
+2. Configurar Cloudflare Email Routing (`info@tcotruck.com` → Gmail personal).
+3. Página `/methodology` con fuentes y supuestos del modelo.
+4. Versión inglesa (`/en/` o toggle en runtime).
+5. Mejoras del modelo TCO inspiradas en ICCT TCO Calculator: tasa de
+   descuento NPV, escalado anual de precios de combustible/electricidad,
+   coste laboral del conductor + tiempo de carga, penalización por
+   carga útil (peso de batería).
+6. Blog en `tcotruck.com/blog` con generador estático (Astro u otro).
+   **No usar WordPress** para este blog.
+7. Actualizar `actions/checkout` y `actions/setup-python` cuando den
+   deprecation warnings serios (versiones más nuevas estables).
+8. Borrar repo viejo `javisalta/tco-truck-2026`.
 
-## Estilo de código
-- Indentación: 2 espacios
-- Comillas: dobles para HTML, simples para JavaScript
-- Comentarios en español, breves y solo cuando aportan
-- Nombres de variables y funciones en inglés (estándar JS), nombres de UI en español
+## Estructura del repo
+
+```
+C:\proyectos\tcotruck\
+├── .github/
+│   ├── scripts/
+│   │   └── fetch_prices.py        # script Python que consume API MITECO
+│   └── workflows/
+│       └── update-prices.yml      # cron diario que actualiza prices.json
+├── CLAUDE.md                       # este archivo
+├── README.md
+├── index.html                      # único archivo HTML/CSS/JS
+├── prices.json                     # generado por el workflow, no editar a mano
+├── favicon.ico                     # set de favicons
+├── favicon-*.png
+├── apple-touch-icon.png
+└── site.webmanifest
+```
