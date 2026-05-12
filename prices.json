@@ -1,14 +1,14 @@
 {
   "gasoleo_a": 1.695,
-  "gasoleo_a_profesional": 1.262,
-  "estaciones": 11214,
-  "fecha": "12/05/2026 12:03:49",
-  "iso_date": "2026-05-12T12:03:49",
+  "gasoleo_a_profesional": 1.546,
+  "estaciones": 11213,
+  "fecha": "12/05/2026 12:57:46",
+  "iso_date": "2026-05-12T12:57:46",
   "fuente": "MITECO",
   "stale": false,
-  "last_check": "2026-05-12T10:04:07.429726+00:00",
+  "last_check": "2026-05-12T10:58:10.016343+00:00",
   "descuentos_profesional": {
-    "devolucion_profesional_eur_l": 0.067,
-    "descuento_flota_eur_l": 0.366
+    "devolucion_profesional_eur_l": 0.049,
+    "descuento_flota_eur_l": 0.1
   }
 }
