@@ -544,7 +544,7 @@ input[type=range].sr::-webkit-slider-thumb { -webkit-appearance:none; width:14px
         <button onclick="setPriceScenario('profesional')" id="tab-profesional" style="flex:1;padding:5px 4px;font-size:10px;font-weight:600;font-family:inherit;border-radius:5px;cursor:pointer;border:1.5px solid var(--diesel);background:#fffbeb;color:#92400e;transition:all .15s;">Profesional ✓</button>
       </div>
       <div id="price-scenario-note" style="font-size:9.5px;color:var(--text3);margin-top:5px;line-height:1.5;padding:5px 7px;background:var(--bg);border-radius:5px;border:1px solid var(--border);">
-        <strong style="color:var(--text2);">Precio profesional</strong> — incluye devolución gasóleo profesional (~0,067 €/l) + descuento tarjeta flota (~0,25–0,35 €/l). Típico en flotas medianas-grandes España.
+        <strong style="color:var(--text2);">Precio profesional</strong> — surtidor menos devolución AEAT del Impuesto sobre Hidrocarburos (0,049 €/l) y descuento típico de tarjeta de flota (0,100 €/l). Estable para flotas medianas-grandes; tu descuento real puede variar.
       </div>
     </div>
 
@@ -1436,7 +1436,7 @@ function setPriceScenario(sc) {
   if(sc==='surtidor') {
     note.innerHTML = '<strong style="color:var(--text2);">Precio de surtidor</strong> — precio medio nacional MINETUR. Válido para autónomos o flotas pequeñas sin acuerdo de flota.';
   } else {
-    note.innerHTML = '<strong style="color:var(--text2);">Precio profesional</strong> — incluye devolución gasóleo profesional (~0,067 €/l) + descuento tarjeta flota (~0,25–0,35 €/l). Típico en flotas medianas-grandes España.';
+    note.innerHTML = '<strong style="color:var(--text2);">Precio profesional</strong> — surtidor menos devolución AEAT del Impuesto sobre Hidrocarburos (0,049 €/l) y descuento típico de tarjeta de flota (0,100 €/l). Estable para flotas medianas-grandes; tu descuento real puede variar.';
   }
   update();
 }
@@ -1484,13 +1484,13 @@ async function loadLivePrices() {
 
     if(pr.status==='fulfilled' && pr.value.gasoleo_a) {
       const p = pr.value;
-      // Actualiza ambos escenarios. El profesional se deriva del surtidor
-      // restando devolución (~0,067 €/l) + descuento tarjeta flota (~0,366 €/l).
-      // El backend ya envía gasoleo_a_profesional pre-calculado; si no, lo derivamos aquí.
+      // Fallback: derivar precio profesional restando devolución AEAT
+      // (0,049 €/l, Orden HFP/941/2022) + descuento típico tarjeta flota
+      // (0,100 €/l). Solo aplica si prices.json no trae el campo ya calculado.
       DIESEL_PRICES.surtidor.price = p.gasoleo_a;
       const profPrice = (typeof p.gasoleo_a_profesional === 'number')
         ? p.gasoleo_a_profesional
-        : +(p.gasoleo_a - 0.067 - 0.366).toFixed(3);
+        : +(p.gasoleo_a - 0.049 - 0.100).toFixed(3);
       DIESEL_PRICES.profesional.price = profPrice;
       // Refresca el slider con el precio del escenario actualmente activo
       const activePrice = DIESEL_PRICES[priceScenario].price;

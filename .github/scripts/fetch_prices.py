@@ -35,13 +35,23 @@ API_URL = (
     "PreciosCarburantes/EstacionesTerrestres/"
 )
 
-# Descuentos profesionales (€/l) — alineados con la nota del propio index.html:
-#   "devolución gasóleo profesional (~0,067 €/l) + descuento tarjeta flota
-#    (~0,25–0,35 €/l). Típico en flotas medianas-grandes España."
-# Usamos el extremo alto del descuento de flota para flotas medianas-grandes,
-# lo que reproduce el valor histórico hardcoded (surtidor 1,863 → profesional 1,43).
-DEVOLUCION_PROFESIONAL = 0.067
-DESCUENTO_FLOTA       = 0.366  # ≈ extremo alto del rango 0,25–0,35
+# Descuentos profesionales (€/l) para flotas medianas-grandes en España.
+# Suma de dos conceptos independientes:
+#   1. Devolución parcial del Impuesto sobre Hidrocarburos por gasóleo
+#      profesional: 0,049 €/l. Valor estructural fijado por la Orden
+#      HFP/941/2022, vigente desde el 1 de enero de 2019, uniforme en
+#      todo el territorio nacional. Tope 50.000 l/vehículo/año.
+#      Gestionado a posteriori por la AEAT, no es un descuento en surtidor.
+#   2. Descuento típico de tarjeta profesional de flota: 0,100 €/l.
+#      Extremo alto del rango habitual sin promociones extraordinarias:
+#      Galp Flota Business (~6-8 cts/l), Repsol Solred Precio Profesional
+#      (13-15 cts/l con >8.000 l/mes), AS-24 (~11-15 cts/l).
+# NOTA: cifras estables que NO reflejan el régimen extraordinario del
+# RD-ley 7/2026 (ayuda directa de 20 cts/l + IVA al 10%, vigente del
+# 22 de marzo al 30 de junio de 2026). Decisión deliberada para que la
+# herramienta sirva para comparar escenarios entre sí a largo plazo.
+DEVOLUCION_PROFESIONAL = 0.049
+DESCUENTO_FLOTA       = 0.100  # ≈ extremo alto del rango habitual 0,06–0,10
 
 REPO_ROOT  = Path(__file__).resolve().parents[2]
 OUT_PATH   = REPO_ROOT / "prices.json"
