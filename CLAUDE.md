@@ -55,6 +55,12 @@ en cada push a `main`).
   desde la API de MITECO. Ver `.github/workflows/update-prices.yml` y
   `.github/scripts/fetch_prices.py`. El cron está programado a las
   07:30 UTC (≈ 09:30 hora peninsular en verano).
+  - Desde el 14/05/2026 (commit `a85bdbf`) el fetch reintenta hasta 4 veces
+    con backoff (30/60/120s) ante fallos de red transitorios, y aplica un
+    gate de staleness con `STALE_THRESHOLD_DAYS` (default 3) declarado en
+    el workflow. Si el último fetch con éxito supera el umbral, el script
+    sale en rojo (exit 1) para forzar atención humana en vez de servir
+    datos viejos en silencio.
 - **Modelos de camión 2025-2026**: Mercedes Actros, Volvo FH, Scania R,
   MAN TGX, DAF XF, Renault T.
 - **Degradación de batería**: basada en el estudio Geotab 2025.
