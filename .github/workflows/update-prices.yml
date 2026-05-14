@@ -32,6 +32,10 @@ jobs:
 
       - name: Fetch MITECO prices
         id: fetch
+        env:
+          # Días que puede tener el último fetch con éxito antes de que el
+          # workflow falle en rojo. Editable aquí sin tocar el script.
+          STALE_THRESHOLD_DAYS: '3'
         run: python .github/scripts/fetch_prices.py
 
       - name: Commit updated prices.json
