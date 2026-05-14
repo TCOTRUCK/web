@@ -48,4 +48,26 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add prices.json
           git commit -m "chore(prices): actualiza Gasóleo A · surtidor ${{ steps.fetch.outputs.surtidor }} €/l · prof ${{ steps.fetch.outputs.profesional }} €/l (${{ steps.fetch.outputs.estaciones }} estaciones)"
-          git push
+          # Publica reintegrando cambios remotos (evita rechazo del push por
+          # carreras con otros commits en main). Hasta 2 intentos: cubre el
+          # caso raro de una segunda colisión entre el rebase y el push.
+          for attempt in 1 2; do
+            if ! git pull --rebase origin main; then
+              git rebase --abort || true
+              echo "::group::Estado del repo tras conflicto"
+              git status --short
+              echo "::endgroup::"
+              echo "::error::Conflicto al rebasar prices.json — el commit local no se ha publicado"
+              exit 1
+            fi
+            if git push origin HEAD:main; then
+              echo "Push correcto (intento $attempt)."
+              exit 0
+            fi
+            echo "::warning::Push rechazado (intento $attempt); reintentando tras rebase."
+            if [ "$attempt" -lt 2 ]; then
+              sleep 2
+            fi
+          done
+          echo "::error::Push falló tras 2 intentos de rebase+push — el commit local no se ha publicado"
+          exit 1
