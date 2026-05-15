@@ -5,11 +5,12 @@
   "fecha": "14/05/2026 12:31:20",
   "iso_date": "2026-05-14T12:31:20",
   "fuente": "MITECO",
-  "stale": false,
-  "last_check": "2026-05-14T10:31:52.705611+00:00",
+  "stale": true,
+  "last_check": "2026-05-15T10:05:03.951555+00:00",
   "last_successful_fetch": "2026-05-14T10:31:52.705611+00:00",
   "descuentos_profesional": {
     "devolucion_profesional_eur_l": 0.049,
     "descuento_flota_eur_l": 0.1
-  }
+  },
+  "last_error": "fetch error: <urlopen error [Errno 104] Connection reset by peer>"
 }
