@@ -6,11 +6,11 @@
   "iso_date": "2026-05-16T11:09:12",
   "fuente": "MITECO",
   "stale": true,
-  "last_check": "2026-05-17T09:21:04.765189+00:00",
+  "last_check": "2026-05-18T11:17:34.355175+00:00",
   "last_successful_fetch": "2026-05-16T09:09:39.212820+00:00",
   "descuentos_profesional": {
     "devolucion_profesional_eur_l": 0.049,
     "descuento_flota_eur_l": 0.1
   },
-  "last_error": "fetch error: <urlopen error [Errno 104] Connection reset by peer>"
+  "last_error": "fetch error: HTTP Error 503: Service Unavailable"
 }
